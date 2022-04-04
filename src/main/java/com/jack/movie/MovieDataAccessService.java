@@ -3,6 +3,7 @@ package com.jack.movie;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,7 +20,22 @@ public class MovieDataAccessService implements MovieDao {
 
     @Override
     public List<Movie> selectMovies() {
-        throw new UnsupportedOperationException("not implemented");
+        var sql = """
+                SELECT id, name, release_date
+                FROM movie
+                LIMIT  100      
+                    """;
+        List<Movie> movies = jdbcTemplate.query(
+                sql, ((resultSet, i) -> {
+                    return new Movie(
+                            resultSet.getInt("id"),
+                            resultSet.getString("name"),
+                            null,
+                            LocalDate.parse(resultSet.getString("release_date"))
+                    );
+                })
+        );
+        return movies;
     }
 
     @Override
