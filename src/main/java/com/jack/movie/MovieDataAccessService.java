@@ -25,17 +25,7 @@ public class MovieDataAccessService implements MovieDao {
                 FROM movie
                 LIMIT  100      
                     """;
-        List<Movie> movies = jdbcTemplate.query(
-                sql, ((resultSet, i) -> {
-                    return new Movie(
-                            resultSet.getInt("id"),
-                            resultSet.getString("name"),
-                            null,
-                            LocalDate.parse(resultSet.getString("release_date"))
-                    );
-                })
-        );
-        return movies;
+        return jdbcTemplate.query(sql, new MovieRowMapper());
     }
 
     @Override
